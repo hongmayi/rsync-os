@@ -28,7 +28,8 @@ func ClientS3(src string, dest string) {
 
 	log.Println(module, path)
 
-	ppath := rsync.TrimPrepath(path)
+        ppath := rsync.TrimPrepath(path)
+        mpath := module + "/" + ppath
 
 	if viper.GetStringMapString(dest) == nil {
 		log.Println("Lack of ", dest)
@@ -40,7 +41,7 @@ func ClientS3(src string, dest string) {
 	minioConf := viper.GetStringMapString(dest)
 
 
-	stor, _ := storage.NewMinio(module, ppath, dbconf["path"], minioConf["endpoint"], minioConf["keyaccess"], minioConf["keysecret"], false)
+        stor, _ := storage.NewMinio(minioConf["bucket"], mpath, dbconf["path"], minioConf["endpoint"], minioConf["keyaccess"], minioConf["keysecret"], false)
 	defer stor.Close()
 
 	client, err := rsync.SocketClient(stor, addr, module, ppath, nil)
